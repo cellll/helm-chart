@@ -1,0 +1,34 @@
+apiversion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ }} 
+  labels:
+    {{- include "uyuni.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.uyuni.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "uyuni.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "uyuni.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "uyuni.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Values.uyuni.container.name }} 
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.uyuni.image.repository }}:{{ .Values.uyuni.image.tag }}"

@@ -1,0 +1,7 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.mariadb.storageClass.name }}
+provisioner: {{ .Values.mariadb.storageClass.provisioner }}
+volumeBindingMode: {{ .Values.mariadb.storageClass.volumeBindingMode }}
+reclaimPolicy: {{ .Values.mariadb.storageClass.reclaimPolicy }}

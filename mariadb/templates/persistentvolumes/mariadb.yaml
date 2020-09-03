@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.mariadb.persistentVolume.name }}
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Values.mariadb.storageClass.name }}
+  capacity:
+    storage: {{ .Values.mariadb.persistentVolume.storage }}
+  accessModes:
+    - {{ .Values.mariadb.persistentVolume.accessModes }}
+  volumeMode: {{ .Values.mariadb.persistentVolume.volumeMode }}
+  persistentVolumeReclaimPolicy: {{ .Values.mariadb.persistentVolume.reclaimPolicy }}
+  local:
+    path: {{ .Values.mariadb.persistentVolume.localPath }}
+  claimRef:
+    namespace: {{ .Values.namespace }}
+    name: {{ .Values.mariadb.persistentVolumeClaim.name }} 
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - {{ .Values.mariadb.persistentVolume.nodeName }}

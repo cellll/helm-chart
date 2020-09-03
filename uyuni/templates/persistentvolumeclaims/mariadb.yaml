@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.mariadb.persistentVolumeClaim.name }} 
+spec:
+  accessModes: 
+    - {{ .Values.mariadb.persistentVolumeClaim.accessModes }} 
+  resources:
+    requests:
+      storage: {{ .Values.mariadb.persistentVolumeClaim.storage }}
