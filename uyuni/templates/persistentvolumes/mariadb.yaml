@@ -5,7 +5,7 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: {{ .Values.mariadb.storageClass.name }}
+  storageClassName: {{ .Values.storageClass.name }}
   capacity:
     storage: {{ .Values.mariadb.persistentVolume.storage }}
   accessModes:

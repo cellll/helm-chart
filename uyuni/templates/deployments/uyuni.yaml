@@ -1,7 +1,7 @@
-apiversion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ }} 
+  name: {{ include "uyuni.uyuni.fullname" . }}
   labels:
     {{- include "uyuni.labels" . | nindent 4 }}
 spec:
@@ -32,3 +32,33 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.uyuni.image.repository }}:{{ .Values.uyuni.image.tag }}"
+          command:
+          - "/bin/bash"
+          - "-c"
+          args: ["$CATALINA_HOME/bin/startup.sh && tail -f /dev/null"]
+          ports:
+          - containerPort: {{ .Values.uyuni.container.containerPort }}
+          volumeMounts:
+          {{- range $idx, $path := .Values.uyuni.container.mountPaths }}
+          - name: uyuni-storage
+            mountPath: {{ $path.mountPath }}
+            subPath: {{ $path.subPath }} 
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: uyuni-storage
+        persistentVolumeClaim:
+          claimName: {{ .Values.uyuni.persistentVolumeClaim.name }} 
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

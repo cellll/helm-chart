@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.uyuni.persistentVolume.name }}
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Values.storageClass.name }}
+  capacity:
+    storage: {{ .Values.uyuni.persistentVolume.storage }}
+  accessModes:
+    - {{ .Values.uyuni.persistentVolume.accessModes }}
+  volumeMode: {{ .Values.uyuni.persistentVolume.volumeMode }}
+  persistentVolumeReclaimPolicy: {{ .Values.uyuni.persistentVolume.reclaimPolicy }}
+  local:
+    path: {{ .Values.uyuni.persistentVolume.localPath }}
+  claimRef:
+    namespace: {{ .Values.namespace }}
+    name: {{ .Values.uyuni.persistentVolumeClaim.name }} 
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - {{ .Values.uyuni.persistentVolume.nodeName }}

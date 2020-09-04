@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "uyuni.uyuni.fullname" . }}
+  labels:
+    {{- include "uyuni.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.uyuni.service.type }}
+  ports:
+    - name: mariadb
+      port: {{ .Values.uyuni.service.port }}
+      targetPort: {{ .Values.uyuni.service.targetPort }}
+      nodePort: {{ .Values.uyuni.service.nodePort }}
+      protocol: TCP
+
+  selector:
+    {{- include "uyuni.selectorLabels" . | nindent 4 }}

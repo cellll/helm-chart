@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.uyuni.persistentVolumeClaim.name }} 
+spec:
+  accessModes: 
+    - {{ .Values.uyuni.persistentVolumeClaim.accessModes }} 
+  resources:
+    requests:
+      storage: {{ .Values.uyuni.persistentVolumeClaim.storage }}

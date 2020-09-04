@@ -3,6 +3,12 @@
 # Declare variables to be passed into your templates.
 namespace: default
 
+storageClass:
+  name: uyuni-storageclass
+  provisioner: kubernetes.io/no-provisioner
+  volumeBindingMode: WaitForFirstConsumer
+  reclaimPolicy: Retain
+
 mariadb:
   name: mariadb
   replicaCount: 1
@@ -12,12 +18,6 @@ mariadb:
     containerPort: 3306
     mountPath: /var/lib/mysql
     
-  storageClass:
-    name: mariadb-storageclass
-    provisioner: kubernetes.io/no-provisioner
-    volumeBindingMode: WaitForFirstConsumer
-    reclaimPolicy: Retain
-  
   persistentVolume:
     name: mariadb-pv
     storage: 50Gi
@@ -56,10 +56,47 @@ uyuni:
   container:
     name: uyuni-web
     containerPort: 8080
+    mountPaths:
+      - name: webapps-path
+        mountPath: /usr/local/tomcat/webapps
+        subPath: webapps
+      - name: logs-path
+        mountPath: /usr/local/tomcat/logs
+        subPath: logs
+  
+  persistentVolume:
+    name: uyuni-pv
+    storage: 1Gi
+    accessModes: ReadWriteMany
+    volumeMode: Filesystem
+    reclaimPolicy: Retain
+    localPath: /root/Uyuni/tomcat
+    nodeName: xiilab-gpunode2
+
+  persistentVolumeClaim:
+    name: uyuni-pvc
+    storage: 1Gi
+    accessModes: ReadWriteMany
     
   image:
     repository: tomcat
+    tag: 7-jdk8-openjdk
+    pullPolicy: IfNotPresent
+    
+  service:
+    type: NodePort
+    port: 8080
+    targetPort: 8080
+    nodePort: 30000
   
+#   persistentVolume:
+#     name: uyuni-pv
+#     storage: 1Gi
+#     accessModes: ReadWriteMany
+#     volumeMode: Filesystem
+#     reclaimPolicy: Retain
+#     localPath: /root/Uyuni/tomcat/logs
+#     nodeName: xiilab-gpunode2
 
 
 imagePullSecrets: []
