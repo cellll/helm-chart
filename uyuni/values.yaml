@@ -3,12 +3,21 @@
 # Declare variables to be passed into your templates.
 namespace: default
 
-storageClass:
-  name: uyuni-storageclass
+# local storage class 
+localStorageClass:
+  name: local-storage
   provisioner: kubernetes.io/no-provisioner
   volumeBindingMode: WaitForFirstConsumer
   reclaimPolicy: Retain
 
+# Uyuni tomcat storage class 
+storageClass:
+  name: uyuni-storage
+  provisioner: kubernetes.io/no-provisioner
+  volumeBindingMode: WaitForFirstConsumer
+  reclaimPolicy: Retain
+
+# mariadb configuration
 mariadb:
   name: mariadb
   replicaCount: 1
@@ -49,6 +58,7 @@ mariadb:
     targetPort: 3306
     nodePort: 30006
 
+# uyuni - tomcat configuration
 uyuni:
   name: uyuni
   replicaCount: 1
@@ -88,15 +98,6 @@ uyuni:
     port: 8080
     targetPort: 8080
     nodePort: 30000
-  
-#   persistentVolume:
-#     name: uyuni-pv
-#     storage: 1Gi
-#     accessModes: ReadWriteMany
-#     volumeMode: Filesystem
-#     reclaimPolicy: Retain
-#     localPath: /root/Uyuni/tomcat/logs
-#     nodeName: xiilab-gpunode2
 
 
 imagePullSecrets: []
